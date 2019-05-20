@@ -177,11 +177,12 @@ void make_schedule(struct Topic topics[], struct Time days[], struct Schedule sc
 		free_time = days[i].total;
 		schedules[i].s_h[0] = days[i].s_h; // initialize when the work starts in one day
 		schedules[i].s_m[0] = days[i].s_m;
-		while(free_time > 20){
-			if(j >= n_tasks) break;
-			avg = (double) topics[j].mins_required/(topics[j].deadline_day - i);
-			if(avg <= 5 || topics[j].deadline_day-j == 0)
-				j++;
+		while(free_time > 20){ // keep adding tasks until free time is smaller than 20 minutes
+			if(j >= n_tasks) break; // this means that we have added all tasks for the day
+			avg = (double) topics[j].mins_required/(topics[j].deadline_day - i); // avg amount of work in order
+											     // to finish before the deadline
+			if(avg <= 3 || topics[j].deadline_day-i == 0)
+				j++; // if avg is smaller than 3 mins or deadline day has arrived just go to another task
 			else if(avg <= free_time){
 				put_in_schedule(topics[j].name, rnd(avg), &schedules[i], k);
 				topics[j].mins_required -= rnd(avg);
